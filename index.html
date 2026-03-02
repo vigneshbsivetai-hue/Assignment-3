@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Event Registration</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#f2f2f2;
+}
+
+.container{
+    width:700px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:8px;
+}
+
+h2{
+    text-align:center;
+}
+
+input, select{
+    width:100%;
+    padding:8px;
+    margin:6px 0;
+}
+
+button{
+    background:blue;
+    color:white;
+    padding:10px;
+    border:none;
+    width:100%;
+    cursor:pointer;
+}
+
+button:hover{
+    background:darkblue;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+table, th, td{
+    border:1px solid black;
+    padding:8px;
+    text-align:center;
+}
+
+.valid{
+    border:2px solid green;
+}
+
+.invalid{
+    border:2px solid red;
+}
+
+#successMsg{
+    color:green;
+    text-align:center;
+    font-weight:bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Event Registration Form</h2>
+
+<form id="regForm">
+
+Name:
+<input type="text" id="name">
+
+Email:
+<input type="text" id="email">
+
+Phone:
+<input type="text" id="phone">
+
+Date of Birth:
+<input type="date" id="dob">
+
+Gender:
+<select id="gender">
+<option value="">Select</option>
+<option>Male</option>
+<option>Female</option>
+</select>
+
+Event:
+<select id="event">
+<option value="">Select</option>
+<option>Web Development</option>
+<option>AI Workshop</option>
+<option>Hackathon</option>
+</select>
+
+Mode:
+<select id="mode">
+<option value="">Select</option>
+<option>Online</option>
+<option>Offline</option>
+</select>
+
+College/Company:
+<input type="text" id="college">
+
+<label>
+<input type="checkbox" id="confirm">
+I confirm that the above details are correct
+</label>
+
+<br><br>
+
+<button type="submit">Register</button>
+
+</form>
+
+<p id="successMsg"></p>
+
+<h3>Registered Participants</h3>
+
+<table id="dataTable">
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Event</th>
+<th>Mode</th>
+</tr>
+</table>
+
+</div>
+
+<script>
+
+document.getElementById("regForm").addEventListener("submit", function(e){
+
+e.preventDefault();
+
+let name = document.getElementById("name");
+let email = document.getElementById("email");
+let phone = document.getElementById("phone");
+let dob = document.getElementById("dob");
+let gender = document.getElementById("gender");
+let event = document.getElementById("event");
+let mode = document.getElementById("mode");
+let college = document.getElementById("college");
+let confirmBox = document.getElementById("confirm");
+
+let valid = true;
+
+/* Email Regex */
+let emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+
+/* Phone Regex */
+let phonePattern = /^[0-9]{10}$/;
+
+/* Validation Function */
+function checkField(field, condition){
+    if(condition){
+        field.classList.add("valid");
+        field.classList.remove("invalid");
+    } else {
+        field.classList.add("invalid");
+        field.classList.remove("valid");
+        valid = false;
+    }
+}
+
+checkField(name, name.value.trim() != "");
+checkField(email, emailPattern.test(email.value));
+checkField(phone, phonePattern.test(phone.value));
+checkField(dob, dob.value != "");
+checkField(gender, gender.value != "");
+checkField(event, event.value != "");
+checkField(mode, mode.value != "");
+checkField(college, college.value.trim() != "");
+
+if(!confirmBox.checked){
+    alert("Please confirm details");
+    valid = false;
+}
+
+if(valid){
+
+let table = document.getElementById("dataTable");
+
+let row = table.insertRow();
+
+row.insertCell(0).innerHTML = name.value;
+row.insertCell(1).innerHTML = email.value;
+row.insertCell(2).innerHTML = phone.value;
+row.insertCell(3).innerHTML = event.value;
+row.insertCell(4).innerHTML = mode.value;
+
+/* Success Message */
+let msg = document.getElementById("successMsg");
+msg.innerHTML = "Registration Successful!";
+
+setTimeout(()=>{
+msg.innerHTML="";
+},3000);
+
+/* Reset Form */
+document.getElementById("regForm").reset();
+
+/* Remove colors after reset */
+let fields = [name,email,phone,dob,gender,event,mode,college];
+fields.forEach(f=>{
+    f.classList.remove("valid");
+});
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
