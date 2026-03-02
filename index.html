@@ -1,55 +1,92 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Event Registration</title>
+<meta charset="UTF-8">
+<title>Creative Event Registration</title>
 
 <style>
 body{
-    font-family: Arial;
-    background:#f2f2f2;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#4facfe,#00f2fe);
+    margin:0;
+    padding:0;
 }
 
 .container{
-    width:700px;
+    width:80%;
     margin:auto;
     background:white;
-    padding:20px;
-    border-radius:8px;
+    margin-top:30px;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 0 15px rgba(0,0,0,0.2);
 }
 
-h2{
+h1{
     text-align:center;
+    color:#333;
+}
+
+label{
+    font-weight:bold;
 }
 
 input, select{
     width:100%;
     padding:8px;
-    margin:6px 0;
+    margin:6px 0 12px 0;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+input:focus, select:focus{
+    outline:none;
+    border:1px solid #4facfe;
 }
 
 button{
-    background:blue;
-    color:white;
+    width:100%;
     padding:10px;
     border:none;
-    width:100%;
+    background:#4facfe;
+    color:white;
+    font-size:16px;
+    border-radius:6px;
     cursor:pointer;
 }
 
 button:hover{
-    background:darkblue;
+    background:#00c6ff;
 }
 
 table{
     width:100%;
-    border-collapse:collapse;
     margin-top:20px;
+    border-collapse:collapse;
 }
 
 table, th, td{
-    border:1px solid black;
+    border:1px solid #ddd;
+}
+
+th{
+    background:#4facfe;
+    color:white;
+    padding:10px;
+}
+
+td{
     padding:8px;
     text-align:center;
+}
+
+.success{
+    background:#d4edda;
+    color:#155724;
+    padding:10px;
+    margin-top:10px;
+    display:none;
+    border-radius:6px;
 }
 
 .valid{
@@ -59,77 +96,58 @@ table, th, td{
 .invalid{
     border:2px solid red;
 }
-
-#successMsg{
-    color:green;
-    text-align:center;
-    font-weight:bold;
-}
 </style>
-
 </head>
 
 <body>
 
 <div class="container">
 
-<h2>Event Registration Form</h2>
+<h1>Event Registration</h1>
 
 <form id="regForm">
 
-Name:
+<label>Name</label>
 <input type="text" id="name">
 
-Email:
+<label>Email</label>
 <input type="text" id="email">
 
-Phone:
+<label>Phone</label>
 <input type="text" id="phone">
 
-Date of Birth:
-<input type="date" id="dob">
+<label>College/Company</label>
+<input type="text" id="college">
 
-Gender:
-<select id="gender">
-<option value="">Select</option>
-<option>Male</option>
-<option>Female</option>
-</select>
-
-Event:
+<label>Event</label>
 <select id="event">
-<option value="">Select</option>
+<option value="">Select Event</option>
 <option>Web Development</option>
 <option>AI Workshop</option>
 <option>Hackathon</option>
 </select>
 
-Mode:
+<label>Mode</label>
 <select id="mode">
-<option value="">Select</option>
+<option value="">Select Mode</option>
 <option>Online</option>
 <option>Offline</option>
 </select>
-
-College/Company:
-<input type="text" id="college">
 
 <label>
 <input type="checkbox" id="confirm">
 I confirm that the above details are correct
 </label>
 
-<br><br>
-
 <button type="submit">Register</button>
 
 </form>
 
-<p id="successMsg"></p>
+<div class="success" id="successMsg">
+Registration Successful!
+</div>
 
-<h3>Registered Participants</h3>
-
-<table id="dataTable">
+<table>
 <tr>
 <th>Name</th>
 <th>Email</th>
@@ -137,93 +155,88 @@ I confirm that the above details are correct
 <th>Event</th>
 <th>Mode</th>
 </tr>
+<tbody id="tableBody"></tbody>
 </table>
 
 </div>
 
 <script>
 
-document.getElementById("regForm").addEventListener("submit", function(e){
+let form = document.getElementById("regForm");
+
+form.addEventListener("submit", function(e){
 
 e.preventDefault();
 
 let name = document.getElementById("name");
 let email = document.getElementById("email");
 let phone = document.getElementById("phone");
-let dob = document.getElementById("dob");
-let gender = document.getElementById("gender");
+let college = document.getElementById("college");
 let event = document.getElementById("event");
 let mode = document.getElementById("mode");
-let college = document.getElementById("college");
 let confirmBox = document.getElementById("confirm");
+
+let emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+let phonePattern = /^[0-9]{10}$/;
 
 let valid = true;
 
-/* Email Regex */
-let emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
-
-/* Phone Regex */
-let phonePattern = /^[0-9]{10}$/;
-
-/* Validation Function */
-function checkField(field, condition){
-    if(condition){
-        field.classList.add("valid");
-        field.classList.remove("invalid");
-    } else {
-        field.classList.add("invalid");
-        field.classList.remove("valid");
-        valid = false;
-    }
-}
-
-checkField(name, name.value.trim() != "");
-checkField(email, emailPattern.test(email.value));
-checkField(phone, phonePattern.test(phone.value));
-checkField(dob, dob.value != "");
-checkField(gender, gender.value != "");
-checkField(event, event.value != "");
-checkField(mode, mode.value != "");
-checkField(college, college.value.trim() != "");
+validateField(name, name.value.trim() !== "");
+validateField(email, emailPattern.test(email.value));
+validateField(phone, phonePattern.test(phone.value));
+validateField(college, college.value.trim() !== "");
+validateField(event, event.value !== "");
+validateField(mode, mode.value !== "");
 
 if(!confirmBox.checked){
-    alert("Please confirm details");
-    valid = false;
+alert("Please confirm details");
+valid = false;
+}
+
+function validateField(field, condition){
+if(condition){
+field.classList.add("valid");
+field.classList.remove("invalid");
+}else{
+field.classList.add("invalid");
+field.classList.remove("valid");
+valid = false;
+}
 }
 
 if(valid){
 
-let table = document.getElementById("dataTable");
+let table = document.getElementById("tableBody");
 
-let row = table.insertRow();
+let row = document.createElement("tr");
 
-row.insertCell(0).innerHTML = name.value;
-row.insertCell(1).innerHTML = email.value;
-row.insertCell(2).innerHTML = phone.value;
-row.insertCell(3).innerHTML = event.value;
-row.insertCell(4).innerHTML = mode.value;
+row.innerHTML = `
+<td>${name.value}</td>
+<td>${email.value}</td>
+<td>${phone.value}</td>
+<td>${event.value}</td>
+<td>${mode.value}</td>
+`;
 
-/* Success Message */
-let msg = document.getElementById("successMsg");
-msg.innerHTML = "Registration Successful!";
+table.appendChild(row);
+
+document.getElementById("successMsg").style.display="block";
 
 setTimeout(()=>{
-msg.innerHTML="";
+document.getElementById("successMsg").style.display="none";
 },3000);
 
-/* Reset Form */
-document.getElementById("regForm").reset();
+form.reset();
 
-/* Remove colors after reset */
-let fields = [name,email,phone,dob,gender,event,mode,college];
-fields.forEach(f=>{
-    f.classList.remove("valid");
+let inputs = document.querySelectorAll("input, select");
+inputs.forEach(i=>{
+i.classList.remove("valid");
+i.classList.remove("invalid");
 });
 
 }
 
 });
-
 </script>
 
 </body>
